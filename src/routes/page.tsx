@@ -1,96 +1,47 @@
-import { Helmet } from '@modern-js/runtime/head';
-import './index.css';
+// babel-plugin-import
+// Modern.js Automatically import CSS required by Ant Design component on demand.
 
-const Index = () => (
-  <div className="container-box">
-    <Helmet>
-      <link
-        rel="icon"
-        type="image/x-icon"
-        href="https://lf3-static.bytednsdoc.com/obj/eden-cn/uhbfnupenuhf/favicon.ico"
+import { Helmet } from '@modern-js/runtime/head';
+import { useModel } from '@modern-js/runtime/model';
+import { useLoaderData } from '@modern-js/runtime/router';
+import { List } from 'antd';
+import Item from '../components/Item';
+import contacts from '../models/contacts';
+import type { LoaderData } from './page.data';
+
+function Index() {
+  const { data } = useLoaderData() as LoaderData;
+  // useModel is the hooks API provided by the Modern.js. You can provide the state
+  // defined in the Model in the component, or call the side effects and actions
+  // defined in the Model through actions to change the state of the Model.
+
+  // Model is business logic, a computational process that does not create or
+  // hold state itself. Only after being used by the component with the hooks API,
+  // the state is created in the specified place.
+  const [{ items }, { archive, setItems }] = useModel(contacts);
+  if (items.length === 0) {
+    setItems(data);
+  }
+
+  return (
+    <div className="container lg mx-auto">
+      <Helmet>
+        <title>All</title>
+      </Helmet>
+      <List
+        dataSource={items}
+        renderItem={info => (
+          <Item
+            key={info.name}
+            info={info}
+            onArchive={() => {
+              archive(info.email);
+            }}
+          />
+        )}
       />
-    </Helmet>
-    <main>
-      <div className="title">
-        Welcome to
-        <img
-          className="logo"
-          src="https://lf3-static.bytednsdoc.com/obj/eden-cn/zq-uylkvT/ljhwZthlaukjlkulzlp/modern-js-logo.svg"
-          alt="Modern.js Logo"
-        />
-        <p className="name">Modern.js</p>
-      </div>
-      <p className="description">
-        Get started by editing <code className="code">src/routes/page.tsx</code>
-      </p>
-      <div className="grid">
-        <a
-          href="https://modernjs.dev/guides/get-started/introduction.html"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="card"
-        >
-          <h2>
-            Guide
-            <img
-              className="arrow-right"
-              src="https://lf3-static.bytednsdoc.com/obj/eden-cn/zq-uylkvT/ljhwZthlaukjlkulzlp/arrow-right.svg"
-              alt="Guide"
-            />
-          </h2>
-          <p>Follow the guides to use all features of Modern.js.</p>
-        </a>
-        <a
-          href="https://modernjs.dev/tutorials/foundations/introduction.html"
-          target="_blank"
-          className="card"
-          rel="noreferrer"
-        >
-          <h2>
-            Tutorials
-            <img
-              className="arrow-right"
-              src="https://lf3-static.bytednsdoc.com/obj/eden-cn/zq-uylkvT/ljhwZthlaukjlkulzlp/arrow-right.svg"
-              alt="Tutorials"
-            />
-          </h2>
-          <p>Learn to use Modern.js to create your first application.</p>
-        </a>
-        <a
-          href="https://modernjs.dev/configure/app/usage.html"
-          target="_blank"
-          className="card"
-          rel="noreferrer"
-        >
-          <h2>
-            Config
-            <img
-              className="arrow-right"
-              src="https://lf3-static.bytednsdoc.com/obj/eden-cn/zq-uylkvT/ljhwZthlaukjlkulzlp/arrow-right.svg"
-              alt="Config"
-            />
-          </h2>
-          <p>Find all configuration options provided by Modern.js.</p>
-        </a>
-        <a
-          href="https://github.com/web-infra-dev/modern.js"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="card"
-        >
-          <h2>
-            Github
-            <img
-              className="arrow-right"
-              src="https://lf3-static.bytednsdoc.com/obj/eden-cn/zq-uylkvT/ljhwZthlaukjlkulzlp/arrow-right.svg"
-              alt="Github"
-            />
-          </h2>
-          <p>View the source code of Github, feel free to contribute.</p>
-        </a>
-      </div>
-    </main>
-  </div>
-);
+    </div>
+  );
+}
 
 export default Index;
